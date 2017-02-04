@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>msisdn parser</title>
+    <title>QueuePlatform example</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.3.1/css/bulma.min.css"/>
 </head>
 <body>
@@ -16,22 +16,22 @@
                         <span class="select">
                             <select v-model="task">
                                 <option value="reverse">Reverse</option>
-                                <option value="fibonnaci">Fibonnaci</option>
-                                <option>Reverse</option>
-                                <option>Reverse</option>
+                                <option value="fibonacci">Fibonacci</option>
+                                <option value="encoder">Encoder</option>
+                                <option value="arithmetic">Arithmetic</option>
+                                <option value="slowtask">Slow Task (10 sec)</option>
                             </select>
                         </span>
                     </p>
                     <label class="label">Params</label>
                     <p class="control">
-                        <input class="input" type="text" placeholder="msisdn" v-model="params">
+                        <input class="input" type="text" placeholder="params" v-model="params">
                     </p>
                     <button :disabled="task == null" type="submit" class="button is-primary">Queue task</button>
                 </form>
             </div>
         </div>
         <div class="column is-three-quarters">
-            <code>{{ tasks | json }}</code>
             <table class="table">
                 <thead>
                     <tr>
@@ -39,6 +39,7 @@
                         <th>Name</th>
                         <th>Params</th>
                         <th>Status</th>
+                        <th>Result</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +48,7 @@
                         <td>{{ t.name }}</td>
                         <td>{{ t.params }}</td>
                         <td>{{ t.status }}</td>
+                        <td>{{ t.result }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -67,13 +69,8 @@
 
 		methods: {
 			send() {
-				axios.post('/queue.php', `{"jsonrpc":"2.0","method":"queueTask","id":1,"params":["${this.task}", ["${this.params}"]]}`)
+				axios.post('/queue.php', `{"jsonrpc":"2.0","method":"queueTask","id":1,"params":["${this.task}", "${this.params}"]}`)
 					.then(({data}) => {
-//						if (data.error) {
-//							this.result.unshift({msisdn: this.msisdn, style: 'is-danger', data: data.error.message});
-//							this.msisdn = '';
-//							return;
-//						}
                         console.log(data);
 						this.tasks.unshift(data.result);
 					});
@@ -81,9 +78,17 @@
 		},
 
         mounted() {
-//			setInterval(() => {
-//				this.tasks.forEach()
-//            }, 2000);
+			setInterval(() => {
+				this.tasks.forEach((task) => {
+					if ( task.status != 'completed' ) {
+						axios.post('/queue.php', `{"jsonrpc":"2.0","method":"getTask","id":1,"params":[${task.id}]}`)
+							.then(({data}) => {
+								task.status = data.result.status;
+								task.result = data.result.result;
+							});
+					}
+                });
+            }, 2000);
         }
 
 	});
