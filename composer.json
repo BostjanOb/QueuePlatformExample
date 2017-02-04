@@ -1,0 +1,21 @@
+{
+    "name": "bostjan/queue-platform-example",
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "authors": [
+        {
+            "name": "Bostjan Oblak",
+            "email": "bostjan@muha.cc"
+        }
+    ],
+    "require": {
+        "andig/php-shunting-yard": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "BostjanOb\\QueuePlatform\\": "../QueuePlatform/src/",
+            "BostjanOb\\QueuePlatformExample\\": "src/"
+        }
+    }
+}

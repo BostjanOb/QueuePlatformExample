@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>msisdn parser</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.3.1/css/bulma.min.css"/>
+</head>
+<body>
+<div id="app" class="container" style="padding-top: 40px">
+    <div class="columns">
+        <div class="column">
+            <div class="notification is-warning">
+                <form @submit.prevent="send">
+                    <label class="label">Task</label>
+                    <p class="control">
+                        <span class="select">
+                            <select v-model="task">
+                                <option value="reverse">Reverse</option>
+                                <option value="fibonnaci">Fibonnaci</option>
+                                <option>Reverse</option>
+                                <option>Reverse</option>
+                            </select>
+                        </span>
+                    </p>
+                    <label class="label">Params</label>
+                    <p class="control">
+                        <input class="input" type="text" placeholder="msisdn" v-model="params">
+                    </p>
+                    <button :disabled="task == null" type="submit" class="button is-primary">Queue task</button>
+                </form>
+            </div>
+        </div>
+        <div class="column is-three-quarters">
+            <code>{{ tasks | json }}</code>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Params</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="t in tasks">
+                        <td>{{ t.id }}</td>
+                        <td>{{ t.name }}</td>
+                        <td>{{ t.params }}</td>
+                        <td>{{ t.status }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+<script>
+	new Vue({
+		el: '#app',
+		data: {
+			task: "reverse",
+			params: '',
+			tasks: []
+		},
+
+		methods: {
+			send() {
+				axios.post('/queue.php', `{"jsonrpc":"2.0","method":"queueTask","id":1,"params":["${this.task}", ["${this.params}"]]}`)
+					.then(({data}) => {
+//						if (data.error) {
+//							this.result.unshift({msisdn: this.msisdn, style: 'is-danger', data: data.error.message});
+//							this.msisdn = '';
+//							return;
+//						}
+                        console.log(data);
+						this.tasks.unshift(data.result);
+					});
+			}
+		},
+
+        mounted() {
+//			setInterval(() => {
+//				this.tasks.forEach()
+//            }, 2000);
+        }
+
+	});
+</script>
+</html>
