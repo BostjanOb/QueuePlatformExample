@@ -71,7 +71,6 @@
 			send() {
 				axios.post('/queue.php', `{"jsonrpc":"2.0","method":"queueTask","id":1,"params":["${this.task}", "${this.params}"]}`)
 					.then(({data}) => {
-                        console.log(data);
 						this.tasks.unshift(data.result);
 					});
 			}
