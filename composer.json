@@ -11,11 +11,11 @@
         }
     ],
     "require": {
+        "bostjanob/queue-platform": "dev-master",
         "andig/php-shunting-yard": "dev-master"
     },
     "autoload": {
         "psr-4": {
-            "BostjanOb\\QueuePlatform\\": "../QueuePlatform/src/",
             "BostjanOb\\QueuePlatformExample\\": "src/"
         }
     }

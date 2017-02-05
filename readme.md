@@ -24,4 +24,4 @@ vagrant will run 5 processes with supervisor
 1. Clone repository and make public folder available by web server (let's say example.com).
 2. Copy `db.sqlite3.example` to `db.sqlite3`
 3. Run as many processes (`process.php` in src folder) as you want: `php process.php http://example.com/queue.php`
-4. Visit http://exmaple.com/index.html and test workers
+4. Visit http://example.com/index.html and test workers
