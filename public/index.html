@@ -19,7 +19,7 @@
                                 <option value="fibonacci">Fibonacci</option>
                                 <option value="encoder">Encoder</option>
                                 <option value="arithmetic">Arithmetic</option>
-                                <option value="slowtask">Slow Task (10 sec)</option>
+                                <option value="slowtask">Slow Task (param second)</option>
                             </select>
                         </span>
                     </p>
@@ -72,19 +72,17 @@
 				axios.post('/queue.php', `{"jsonrpc":"2.0","method":"queueTask","id":1,"params":["${this.task}", "${this.params}"]}`)
 					.then(({data}) => {
 						this.tasks.unshift(data.result);
+						this.params = '';
 					});
 			}
 		},
 
         mounted() {
 			setInterval(() => {
-				this.tasks.forEach((task) => {
+				this.tasks.forEach((task, index) => {
 					if ( task.status != 'completed' ) {
 						axios.post('/queue.php', `{"jsonrpc":"2.0","method":"getTask","id":1,"params":[${task.id}]}`)
-							.then(({data}) => {
-								task.status = data.result.status;
-								task.result = data.result.result;
-							});
+							.then(({data}) => Vue.set(this.tasks, index, data.result) );
 					}
                 });
             }, 2000);

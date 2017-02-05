@@ -8,7 +8,7 @@ class SlowTask implements Worker {
 
     public function run($params = null)
     {
-        sleep(20);
+        sleep($params);
         return 'Completed';
     }
 }
