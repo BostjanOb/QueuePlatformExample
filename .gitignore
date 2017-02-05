@@ -1,3 +1,4 @@
 vendor
 src/db/db.sqlite3
 .vagrant
+composer.phar

@@ -23,13 +23,23 @@ package { $php:
 	require => Exec['php-repository']
 }
 
+exec{'get-composer':
+    command => "wget -q https://getcomposer.org/composer.phar -O /vagrant/composer.phar",
+    creates => "/vagrant/composer.phar",
+}
+
+exec{'install-composer':
+    command => "php /vagrant/composer.phar install --working-dir=/vagrant --no-dev",
+}
+
 package { 'supervisor':
     ensure => present,
 }
 
 exec { 'set-up':
-    command => 'rm -rf /var/www/html/ && mkdir /tmp/db && cp /vagrant/src/db.sqlite3.example /tmp/db/db.sqlite3 && chmod 777 -R /tmp/db && cp /vagrant/puppet/files/queue-platform-example.conf /etc/supervisor/conf.d/queue-platform-example.conf',
+    command => 'rm -rf /var/www/html && mkdir /tmp/db && cp /vagrant/src/db.sqlite3.example /tmp/db/db.sqlite3 && chmod 777 -R /tmp/db && cp /vagrant/puppet/files/queue-platform-example.conf /etc/supervisor/conf.d/queue-platform-example.conf',
 }
+
 
 file { '/var/www/html':
     ensure => 'link',
