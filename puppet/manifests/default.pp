@@ -1,9 +1,4 @@
-# export LC_ALL="en_US.UTF-8"
-	# apt install software-properties-common
-	# add-apt-repository -y -u ppa:ondrej/php
-	# apt-get update
-	# apt-get upgrade
-	# apt-get install php7.1 (from com
+Exec { path => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ] }
 
 file { '/etc/apt/apt.conf.d/99auth':
     owner => root,
@@ -19,7 +14,6 @@ package { 'software-properties-common':
 
 exec { 'php-repository':
     command => 'add-apt-repository -y -u ppa:ondrej/php',
-    path => '/usr/bin',
     require => Package['software-properties-common']
 }
 
@@ -29,7 +23,26 @@ package { $php:
 	require => Exec['php-repository']
 }
 
-exec { 'set-folder':
-    command => 'rm -rf /var/www/html/ && ln -s /vagrant/public /var/www/html',
-    path => '/usr/bin'
+package { 'supervisor':
+    ensure => present,
+}
+
+exec { 'set-up':
+    command => 'rm -rf /var/www/html/ && mkdir /tmp/db && cp /vagrant/src/db.sqlite3.example /tmp/db/db.sqlite3 && chmod 777 -R /tmp/db && cp /vagrant/puppet/files/queue-platform-example.conf /etc/supervisor/conf.d/queue-platform-example.conf',
+}
+
+file { '/var/www/html':
+    ensure => 'link',
+    target => '/vagrant/public',
+    require => Exec['set-up']
+}
+
+service { 'supervisor':
+  ensure => running,
+  enable => true,
+  require => Exec['set-up']
+}
+
+exec { 'reload-apache2':
+    command => '/etc/init.d/apache2 reload',
 }

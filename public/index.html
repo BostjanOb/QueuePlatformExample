@@ -80,7 +80,7 @@
         mounted() {
 			setInterval(() => {
 				this.tasks.forEach((task, index) => {
-					if ( task.status != 'completed' ) {
+					if ( task.status.toLowerCase() != 'completed' ) {
 						axios.post('/queue.php', `{"jsonrpc":"2.0","method":"getTask","id":1,"params":[${task.id}]}`)
 							.then(({data}) => Vue.set(this.tasks, index, data.result) );
 					}
