@@ -1,4 +1,4 @@
 vendor
 src/db/db.sqlite3
 .vagrant
-composer.phar
+ubuntu-xenial-16.04-cloudimg-console.log

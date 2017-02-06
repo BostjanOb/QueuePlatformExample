@@ -1,0 +1,15 @@
+server {
+	listen 80 default_server;
+	server_name 192.168.29.6;
+
+	root /vagrant/public;
+	index index.php index.html index.htm;
+	location / { 
+		try_files $uri $uri/ =404; 
+	}
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php7.1-fpm.sock;
+	}
+}
