@@ -12,6 +12,13 @@ class FibonnaciTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result, $worker->run($num));
     }
 
+    public function testThrowExceptionForNotANumber()
+    {
+        $this->expectException('InvalidArgumentException');
+        $worker = new \BostjanOb\QueuePlatformExample\Workers\Fibonacci();
+        $worker->run('foo');
+    }
+
     public function fibonnaciProvider()
     {
         return [
@@ -21,7 +28,7 @@ class FibonnaciTest extends \PHPUnit\Framework\TestCase
             [13, 233],
             [13, 233],
             [17, 1597],
-            [34, 5702887]
+            [34, 5702887],
         ];
     }
 

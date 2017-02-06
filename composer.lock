@@ -51,12 +51,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/BostjanOb/QueuePlatform.git",
-                "reference": "ff414ee79969bd85e99caef13c6fee689858e340"
+                "reference": "554050b8e2649689aed9b67196e7dbf479da99ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BostjanOb/QueuePlatform/zipball/ff414ee79969bd85e99caef13c6fee689858e340",
-                "reference": "ff414ee79969bd85e99caef13c6fee689858e340",
+                "url": "https://api.github.com/repos/BostjanOb/QueuePlatform/zipball/554050b8e2649689aed9b67196e7dbf479da99ae",
+                "reference": "554050b8e2649689aed9b67196e7dbf479da99ae",
                 "shasum": ""
             },
             "require": {
@@ -84,7 +84,7 @@
                 }
             ],
             "description": "PHP queue platform to simple build queue job",
-            "time": "2017-02-05 18:38:03"
+            "time": "2017-02-06 21:09:35"
         }
     ],
     "packages-dev": [

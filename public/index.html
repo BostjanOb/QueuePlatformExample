@@ -3,37 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>QueuePlatform example</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.3.1/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 </head>
 <body>
 <div id="app" class="container" style="padding-top: 40px">
-    <div class="columns">
-        <div class="column">
-            <div class="notification is-warning">
-                <form @submit.prevent="send">
-                    <label class="label">Task</label>
-                    <p class="control">
-                        <span class="select">
-                            <select v-model="task">
+    <div class="row">
+        <div class="col-3">
+            <div class="card card-inverse card-warning">
+                <div class="card-block">
+                    <form @submit.prevent="send">
+                        <div class="form-group">
+                            <label>Task</label>
+                            <select v-model="task" class="form-control">
                                 <option value="reverse">Reverse</option>
                                 <option value="fibonacci">Fibonacci</option>
                                 <option value="encoder">Encoder</option>
                                 <option value="arithmetic">Arithmetic</option>
                                 <option value="slowtask">Slow Task (param second)</option>
                             </select>
-                        </span>
-                    </p>
-                    <label class="label">Params</label>
-                    <p class="control">
-                        <input class="input" type="text" placeholder="params" v-model="params">
-                    </p>
-                    <button :disabled="task == null" type="submit" class="button is-primary">Queue task</button>
-                </form>
+                        </div>
+                        <div class="form-group">
+                            <label>Params</label>
+                            <input class="form-control" type="text" v-model="params">
+                        </div>
+                        <div class="form-group">
+                            <button :disabled="task == null" type="submit" class="btn btn-primary">Queue task</button>
+                        </div>
+                    </form>
+
+                    <button @click="generateRandom(20)" type="button" class="btn btn-danger btn-block btn-sm">Generate 20 random tasks</button>
+                </div>
             </div>
         </div>
-        <div class="column is-three-quarters">
+        <div class="col-9">
             <table class="table">
-                <thead>
+                <thead class="thead-inverse">
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
@@ -43,7 +47,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="t in tasks">
+                    <tr v-for="t in tasks" :class="{'table-success': t.status == 'COMPLETED', 'table-danger': t.status == 'FAILED', 'table-active': t.status == 'RUNNING' }">
                         <td>{{ t.id }}</td>
                         <td>{{ t.name }}</td>
                         <td>{{ t.params }}</td>
@@ -74,7 +78,56 @@
 						this.tasks.unshift(data.result);
 						this.params = '';
 					});
-			}
+			},
+
+			randomString()
+            {
+                let text = "";
+                let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+                for(let i = 0; i < Math.floor((Math.random() * 30) + 1); i++) {
+					text += possible.charAt(Math.floor(Math.random() * possible.length));
+				}
+
+                return text;
+            },
+
+            generateRandom(num) {
+				let request = '[';
+				for (let i = 0; i < num; i++) {
+					let randomTask = Math.floor((Math.random() * 5) + 1);
+					let task, param;
+					switch (randomTask) {
+                        case 1:
+                            task = 'reverse'; param = this.randomString();
+                            break;
+						case 2:
+							task = 'fibonacci'; param = Math.floor((Math.random() * 40) + 1);
+							break;
+						case 3:
+							task = 'arithmetic'; param = '3+3*' + Math.floor((Math.random() * 6) + 1);
+							break;
+						case 4:
+							task = 'encoder'; param = this.randomString();
+							break;
+						default:
+							task = 'slowtask'; param = Math.floor((Math.random() * 20) + 1);
+							break;
+                    }
+
+					request += `{"jsonrpc":"2.0","method":"queueTask","id":${i},"params":["${task}", "${param}"]}`;
+					if ( i < (num-1) )
+					    request += ',';
+                }
+				request += ']';
+
+				axios.post('/queue.php', request)
+					.then(({data}) => {
+					    for(i in data) {
+						    this.tasks.unshift(data[i].result);
+                        }
+					});
+            }
 		},
 
         mounted() {
